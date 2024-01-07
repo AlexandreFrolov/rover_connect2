@@ -32,7 +32,27 @@ class RoverConnect(SIM800L):
     def power_current_status(self):
         power_status = self.command_data_ok('AT+CGNSPWR?')
         matches = re.findall(r'\+CGNSPWR: (\d+)', power_status)
-        return matches[0]        
+        return matches[0]       
+    
+    def creg_status(self):
+        creg_data = self.command_data_ok('AT+CREG?')
+        value_0 = None
+        value_1 = None
+        
+        if creg_data.startswith("+CREG: "):
+            creg_params = creg_data.split(':')[1].strip()
+            split_result = creg_params.split(',')
+            value_0 = split_result[0].strip()
+            value_1 = split_result[1].strip()
+            
+        return value_0, value_1
+        
+    def cpin_status(self):
+        cpin = self.command_data_ok('AT+CPIN?')
+        status = None
+        if cpin.startswith("+CPIN: "):
+            pin = cpin.split(':')[1].strip()
+        return pin        
 
     def cgnsurc_supported_modes(self):
         urc_supported_modes = self.command_data_ok('AT+CGNSURC=?')
@@ -508,6 +528,52 @@ class RoverConnect(SIM800L):
         print(self.http(api_url, method="GET", use_ssl=False, apn=self.apn))    
 
 
+    def dial_phone_number(self, phone_number):
+        buf = None
+        rc = self.command_ok('ATD' + phone_number + ';')
+        if(rc):
+            try:
+                while True:
+                    while self.ser.inWaiting() > 0:
+                        buf = self.ser.readline()
+                        buf = buf.decode('gsm03.38', errors="ignore").strip()
+                    if buf != None:
+                        break 
+            except KeyboardInterrupt:
+                if self.ser != None:
+                    self.ser.close()
+        return(buf)
+
+    def responce_phone_call(self):
+        buf = ""
+        phone_number = ""
+        self.ser.flushInput()
+        try:
+            while True:
+                while self.ser.inWaiting() > 0:
+                    data = self.ser.readline()
+                    buf = data.decode('gsm03.38', errors="ignore").strip()
+                    if "RING" in buf:
+                        break
+                if '+CLIP:' in buf:
+                    print(buf)
+                    rc = self.command_ok('ATA')
+                    split_result = buf.split(',')
+                    phone_number = split_result[0].split(': ')[1].strip('"')
+                    break;
+            while True:
+                data = self.ser.readline()
+                buf = data.decode('gsm03.38', errors="ignore").strip()
+                if buf != None:
+                    break 
+                time.sleep(1)
+            
+        except KeyboardInterrupt:
+            rc = self.command_ok('ATH')
+            if self.ser != None:
+                self.ser.close()
+        
+        return(phone_number)
 
 class Telemetry():
     def __init__(self, rover):
