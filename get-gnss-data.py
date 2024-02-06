@@ -1,15 +1,8 @@
 import traceback
 import pdb
-import re
-import time
-import datetime
 import json
-from collections import namedtuple
 from sim800l import SIM800L
-from rover_connect import SmsTz
 from rover_connect import RoverConnect
-from rover_connect import Telemetry
-
 
 if __name__ == "__main__":
 #    pdb.set_trace()
@@ -17,22 +10,10 @@ if __name__ == "__main__":
     api_url = "http://dbg02-3113.itmatrix.ru:9000/api/data"
     rover = RoverConnect('/dev/ttyS0', 'internet.mts.ru')
     
-    gsm_gnss_info = rover.getGsmLocations()
-        
-    # Создаем словарь на основе данных GSMCGNSInfo
-    gsm_gnss_info_data = {
-        "latitude": gsm_gnss_info.latitude,
-        "longitude": gsm_gnss_info.longitude,
-        "msl_altitude": gsm_gnss_info.msl_altitude
-    }
-
-    # Преобразуем словарь в JSON-строку
-    gsm_gnss_info_json = json.dumps(gsm_gnss_info_data, ensure_ascii=False, indent=2)  
-    gsm_gnss_info_json = json.loads(gsm_gnss_info_json)        
-
-    print(gsm_gnss_info_json)
+    gnss_data = rover.get_cgns_data()
+    gnss_parsed_data = rover.parse_cgns_info(gnss_data)
+    gnss_parsed_data = json.loads(gnss_parsed_data)
     
-
-    
-
+    print(json.dumps(gnss_parsed_data, indent=4))
+ 
 
