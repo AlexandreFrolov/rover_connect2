@@ -7,7 +7,6 @@ from rover_connect import RoverConnect
 if __name__ == "__main__":
 #    pdb.set_trace()
 
-    api_url = "http://dbg02-3113.itmatrix.ru:9000/api/data"
     rover = RoverConnect('/dev/ttyS0', 'internet.mts.ru')
     
     gnss_data = rover.get_cgns_data()
