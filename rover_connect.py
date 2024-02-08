@@ -71,9 +71,9 @@ class RoverConnect(SIM800L):
         
     def parse_cgns_info(self, data_string):
         CGNSInfo = namedtuple("CGNSInfo", [
-            "fix_status", "fix_mode", "utc_datetime",
+            "gnss_status", "fix_status", "utc_datetime",
             "latitude", "longitude", "msl_altitude",
-            "speed", "course", "fix_mode_2", "reserved_1",
+            "speed", "course", "fix_mode", "reserved_1",
             "hdop", "pdop", "vdop", "reserved_2", "satellites_in_view",
             "gnss_satellites_used", "glonass_satellites_used",
             "reserved_3", "c_n0_max", "hpa", "vpa"
@@ -86,16 +86,16 @@ class RoverConnect(SIM800L):
         parts = data_string.strip().split(",")
         
         cgns_info = CGNSInfo(
-            fix_status=parts[0], fix_mode=parts[1], utc_datetime=parts[2],
+            gnss_status=parts[0], fix_status=parts[1], utc_datetime=parts[2],
             latitude=parts[3], longitude=parts[4], msl_altitude=parts[5],
-            speed=parts[6], course=parts[7], fix_mode_2=parts[8],
+            speed=parts[6], course=parts[7], fix_mode=parts[8],
             reserved_1=parts[9], hdop=parts[10], pdop=parts[11],
             vdop=parts[12], reserved_2=parts[13],
             satellites_in_view=parts[14],
             gnss_satellites_used=parts[15], glonass_satellites_used=parts[16],
             reserved_3=parts[17], c_n0_max=parts[18], hpa=parts[19], vpa=parts[20]
         )
-        if cgns_info.fix_status != '1' or cgns_info.fix_mode != '1':
+        if cgns_info.gnss_status != '1' or cgns_info.fix_status != '1':
             raise Exception(f"failed with error: GNSS Position not fixed")
             
             
