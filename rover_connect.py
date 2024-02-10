@@ -481,7 +481,6 @@ class RoverConnect(SIM800L):
         return result
 
     def getGsmLocations(self):
-#        GSMCGNSInfo = namedtuple("GSMCGNSInfo", [ "latitude", "longitude", "msl_altitude" ])
         GSMCGNSInfo = namedtuple("GSMCGNSInfo", [ "latitude", "longitude", "positioning_accuracy" ])
         ip_address = self.connect_gprs(self.apn)
         if ip_address is False:
@@ -514,7 +513,6 @@ class RoverConnect(SIM800L):
         self._Latitude = latitude
         self._Longitude = longitude
         self._Altitude = positioning_accuracy
-#        gsm_cgns_info = GSMCGNSInfo(latitude=latitude, longitude=longitude, msl_altitude=altitude)
         gsm_cgns_info = GSMCGNSInfo(latitude=latitude, longitude=longitude, positioning_accuracy=positioning_accuracy)
         
         if not self.disconnect_gprs():
