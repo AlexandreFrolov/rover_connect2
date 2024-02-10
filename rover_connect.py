@@ -481,7 +481,8 @@ class RoverConnect(SIM800L):
         return result
 
     def getGsmLocations(self):
-        GSMCGNSInfo = namedtuple("GSMCGNSInfo", [ "latitude", "longitude", "msl_altitude" ])
+#        GSMCGNSInfo = namedtuple("GSMCGNSInfo", [ "latitude", "longitude", "msl_altitude" ])
+        GSMCGNSInfo = namedtuple("GSMCGNSInfo", [ "latitude", "longitude", "positioning_accuracy" ])
         ip_address = self.connect_gprs(self.apn)
         if ip_address is False:
             if not keep_session:
@@ -504,7 +505,7 @@ class RoverConnect(SIM800L):
         if matches:
             coordinates = matches[0].split(',')
             if len(coordinates) == 4:
-                mode, longitude, latitude, altitude = coordinates
+                mode, longitude, latitude, positioning_accuracy = coordinates
             else:
                 raise Exception(f"getGsmLoctions failed, Not enough coordinates, data: {data}")
         else:
@@ -512,8 +513,9 @@ class RoverConnect(SIM800L):
 
         self._Latitude = latitude
         self._Longitude = longitude
-        self._Altitude = altitude
-        gsm_cgns_info = GSMCGNSInfo(latitude=latitude, longitude=longitude, msl_altitude=altitude)
+        self._Altitude = positioning_accuracy
+#        gsm_cgns_info = GSMCGNSInfo(latitude=latitude, longitude=longitude, msl_altitude=altitude)
+        gsm_cgns_info = GSMCGNSInfo(latitude=latitude, longitude=longitude, positioning_accuracy=positioning_accuracy)
         
         if not self.disconnect_gprs():
             self.command('AT+HTTPTERM\n')
@@ -622,7 +624,7 @@ class Telemetry():
         gsm_gnss_info_data = {
             "latitude": gsm_gnss_info.latitude,
             "longitude": gsm_gnss_info.longitude,
-            "msl_altitude": gsm_gnss_info.msl_altitude
+            "positioning_accuracy": gsm_gnss_info.positioning_accuracy
         }
 
         # Преобразуем словарь в JSON-строку
