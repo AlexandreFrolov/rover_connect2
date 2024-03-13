@@ -35,14 +35,15 @@ def isvalid_checksum(message: bytes) -> bool:
   
 # CFG-RATE
 
-# measRate=0xE800, navRate=0x0103
-#msg_cfg_rate = b'\x06\x08\x06\x00\xE8\x03\x01\x00\x01\x00'
+# measRate=0xE800, navRate=0x0100
+msg_cfg_rate = b'\x06\x08\x06\x00\xE8\x00\x01\x00\x01\x00'
 
 # measRate=0xE800, navRate=0x010F
-msg_cfg_rate = b'\x06\x08\x06\x00\xE8\x0F\x01\x00\x01\x00'
+#msg_cfg_rate = b'\x06\x08\x06\x00\xE8\x0F\x01\x00\x01\x00'
 
 # measRate=0x6400, navRate=0x0100
 #msg_cfg_rate = b'\x06\x08\x06\x00\x64\x00\x01\x00\x01\x00'
+
 
 hex_string = ''.join(['{:02x} '.format(byte) for byte in msg_cfg_rate])
 print("Команда CFG-RATE без контрольной суммы: " + hex_string)
