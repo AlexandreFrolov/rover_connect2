@@ -1,20 +1,16 @@
 import serial
 import time
 import string
-import pynmea2
 
 # https://github.com/semuconsulting/pyubx2/blob/master/src/pyubx2/ubxhelpers.py
 
 def calculate_checksum(content: bytes) -> bytes:
     """
     Calculate checksum using 8-bit Fletcher's algorithm.
-
     :param bytes content: message content, excluding header and checksum bytes
     :return: checksum
     :rtype: bytes
-
     """
-
     check_a = 0
     check_b = 0
 
@@ -29,13 +25,10 @@ def calculate_checksum(content: bytes) -> bytes:
 def isvalid_checksum(message: bytes) -> bool:
     """
     Validate message checksum.
-
     :param bytes message: message including header and checksum bytes
     :return: checksum valid flag
     :rtype: bool
-
     """
-
     lenm = len(message)
     ckm = message[lenm - 2 : lenm]
     return ckm == calculate_checksum(message[2 : lenm - 2])
