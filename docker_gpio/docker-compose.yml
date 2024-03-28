@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  repka_pi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: repka_pi_led_blink
+    privileged: true 
+
