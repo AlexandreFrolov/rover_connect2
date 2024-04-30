@@ -8,3 +8,7 @@ target_link_libraries(multiBlink PRIVATE wiringrp)
 
 add_executable(button button.c)
 target_link_libraries(button PRIVATE wiringrp)
+
+add_executable(mbutton mbutton.c)
+target_link_libraries(mbutton PRIVATE wiringrp)
+target_link_libraries(mbutton PRIVATE wiringrp)
