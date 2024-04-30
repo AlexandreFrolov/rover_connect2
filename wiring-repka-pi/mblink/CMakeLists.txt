@@ -1,0 +1,7 @@
+cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
+project("multiBlink")
+
+add_subdirectory(../wiring-repka/wiringRP ${CMAKE_BINARY_DIR}/wrp)
+
+add_executable(multiBlink mblink.c)
+target_link_libraries(multiBlink PRIVATE wiringrp)
