@@ -5,3 +5,6 @@ add_subdirectory(../wiring-repka/wiringRP ${CMAKE_BINARY_DIR}/wrp)
 
 add_executable(multiBlink mblink.c)
 target_link_libraries(multiBlink PRIVATE wiringrp)
+
+add_executable(button button.c)
+target_link_libraries(button PRIVATE wiringrp)
