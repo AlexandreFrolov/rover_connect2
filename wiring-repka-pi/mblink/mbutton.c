@@ -45,7 +45,6 @@ void pushButton1(__u32 event, __u64 time) {
 }
 
 void setup() {
-	int rc;
     if (setupWiringRP(WRP_MODE_SUNXI) < 0)
         exit(EXIT_FAILURE);
     pinMode(LED_1, OUTPUT);
