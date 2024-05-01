@@ -50,8 +50,10 @@ void setNeutralPos() {
     float millis = 1.5f;
     int tick = calcTicks(millis, HERTZ);
 	
-//    pca9685PwmWrite(pca9685_fd, pin_x, 0, tick);
-//    pca9685PwmWrite(pca9685_fd, pin_y, 0, tick);
+    pca9685PwmWrite(pca9685_fd, pin_1, 0, tick);
+    pca9685PwmWrite(pca9685_fd, pin_2, 0, tick);
+    tick = calcTicks(1.6f, HERTZ);
+	pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
 }
 
 
