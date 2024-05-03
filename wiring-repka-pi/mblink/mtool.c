@@ -16,6 +16,8 @@ pthread_t thread_led1, thread_led2, thread_servo1, thread_servo2, thread_servo3;
 
 int pca9685_fd = 0;
 const float HERTZ = 50.0f;
+//const float HERTZ = 239.0f;
+
 const int MAX_PWM = 4096;
 const int pca9685Address = 0x40;
 
@@ -28,34 +30,40 @@ float degree_2 = 0.0f;
 int dir_2 = 0;
 
 const int pin_3 = 8;
-float degree_3 = 0.0f;
-int dir_3 = 0;
+
+
+const int pin_4 = 12;
+float degree_4 = 0.0f;
+int dir_4 = 0;
+
 
 
 void pushButton1(__u32 event, __u64 time);
 
-/**
- * Calculate the number of ticks the signal should be high for the required amount of time
- */
 int calcTicks(float impulseMs, float hertz) {
     float cycleMs = 1000.0f / hertz;
-    return (int) ((float)MAX_PWM * impulseMs / cycleMs + 0.5f);
+    return (int) ((float)MAX_PWM * impulseMs / cycleMs + 1.0f);
 }
+
 float mapf(float x, float in_min, float in_max, float out_min, float out_max) {
     return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
+
 void setNeutralPos() {
-    // Set servo to neutral position at 1.5 milliseconds
-    // (View http://en.wikipedia.org/wiki/Servo_control#Pulse_duration)
     float millis = 1.5f;
     int tick = calcTicks(millis, HERTZ);
-	
     pca9685PwmWrite(pca9685_fd, pin_1, 0, tick);
     pca9685PwmWrite(pca9685_fd, pin_2, 0, tick);
-    tick = calcTicks(1.6f, HERTZ);
-	pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
-}
 
+    tick = calcTicks(1.56f, HERTZ);
+	printf("tick for 1.56: %d\n", tick);
+	pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
+	
+    tick = calcTicks(1.56f, HERTZ);
+	printf("tick for 1.56 %d\n", tick);
+	pca9685PwmWrite(pca9685_fd, pin_4, 0, tick);
+	
+}
 
 void* led1_blink(void* arg) {
     pinMode(RELAY_1, OUTPUT);
@@ -100,7 +108,6 @@ void* thread_servo1_rotate(void* arg) {
 			degree_1 = 0;
 			dir_1 = 1;
 		}
-		
 	}
 	degree_1 = 0;
     pthread_exit(NULL);
@@ -125,7 +132,6 @@ void* thread_servo2_rotate(void* arg) {
 			degree_2 = 0;
 			dir_2 = 1;
 		}
-		
 	}
 	degree_2 = 0;
     pthread_exit(NULL);
@@ -133,23 +139,20 @@ void* thread_servo2_rotate(void* arg) {
 
 void* thread_servo3_rotate(void* arg) {
 	int tick;
-	delay(2000);
+	delay(1000);
 	
 	for (int i = 0; i < 3; ++i) {	
 		tick = calcTicks(1.0f, HERTZ);
 		pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
-		delay(1000);
+		delay(2000);
 		tick = calcTicks(2.0f, HERTZ);
 		pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
-		delay(1000);
+		delay(2000);
 		tick = calcTicks(1.6f, HERTZ);
 		pca9685PwmWrite(pca9685_fd, pin_3, 0, tick);
 	}
-	
     pthread_exit(NULL);
 }
-
-
 
 void pushButton1(__u32 event, __u64 time) {
     printf("Button 1 - is %s, timestamp: %lld\n", event == 1 ? "RISING" : "FALLING", time);
@@ -180,13 +183,11 @@ void setup() {
     delay(1000);	
 }
 
-
 void loop() {
   delay(100);
 }
 
 ONDESTROY() {
-	
 	setNeutralPos();
     delay(100);
     pca9685PwmReset(pca9685_fd);
